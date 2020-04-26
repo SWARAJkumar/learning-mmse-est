@@ -4,13 +4,7 @@ This code was used to generate the figures in the article
 
 D. Neumann, T. Wiese, and W. Utschick, _Learning the MMSE Channel Estimator_, Accepted for publication in _IEEE Transactions on Signal Processing_, 2018.
 
-## Abstract
-We present a method for estimating Gaussian random vectors with random covariance matrices, which uses techniques from the field of machine learning.
-Such models are typical in communication systems, where the covariance matrix of the channel vector depends on random parameters, e.g., angles of propagation paths.
-If the covariance matrices exhibit certain Toeplitz and shift-invariance structures, the complexity of the MMSE channel estimator can be reduced to _O(M_ log _M)_ floating point operations, where _M_ is the channel dimension.
-While in the absence of structure the complexity is much higher, we obtain a similarly efficient (but suboptimal) estimator by using the MMSE estimator of the structured model as a blueprint for the architecture of a neural network.
-This network learns the MMSE estimator for the unstructured model, but only within the given class of estimators that contains the MMSE estimator for the structured model.
-Numerical simulations with typical spatial channel models demonstrate the generalization properties of the chosen class of estimators to realistic channel models.
+Paper- https://arxiv.org/pdf/1707.05674.pdf    
 
 
 ## Installation Notes
@@ -27,10 +21,10 @@ Add to path: `export PATH="$PATH:/path/to/<Julia directory>/bin"` , give path to
 
 install the following packages: "CSV", "DataFrames", "Interpolations", "Distributions" .
 
-4. Tensorflow.jl installation:  
-4.1 Frist check if python 3.5 is installed on the system and accessible to the directory. Install tensorflow version 1.4.1 on this using `pip3 install tensorflow==1.4.1` and donnot update this tensflow package
+4. Tensorflow.jl installation:     
+4.1 Frist check if python 3.5 is installed on the system and accessible to the directory. Install tensorflow version 1.4.1 on this using `pip3 install tensorflow==1.4.1` and donnot update this tensflow package.      
 
-4.2 Now install tensorflow.jl which is a wrapper for tensorflow 
+4.2 Now install tensorflow.jl which is a wrapper for tensorflow package for python. It uses pycall to call the tf functions. 
 
 `Pkg.add("TensorFlow",v"0.8.0",v"0.9.0")`     
 
