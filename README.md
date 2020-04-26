@@ -14,8 +14,35 @@ Numerical simulations with typical spatial channel models demonstrate the genera
 
 
 ## Installation Notes
-This code is written in _Julia_ (http://julialang.org) and uses _Julia_'s _TensorFlow_ package, which automatically installs _TensorFlow_ (http://tensorflow.org).
-The code was tested with _Julia_ version 0.6, _TensorFlow_ version 1.4.1, and version 0.8 of the _Julia_ package _TensorFlow_.
+
+Steps for installation on Linux:
+1) Download Julia version 0.6.4 from https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.4-linux-x86_64.tar.gz
+(note- there has been substancial syntax changes to julia 1.0+, this repo will not work with julia 1.0+ or julia 0.7. However, if one need to migrate the code to latest julia version, one must fix all the depricated warning given by juila 0.7)
+
+2)Unizip:  tar -xvzf julia-0.6.4-linux-x86_64.tar.gz 
+Add to path: export PATH="$PATH:/path/to/<Julia directory>/bin" , give path to the bin folder in julia directory 
+
+3) Installing packages- Pkg.add("Packagename")
+install the following packages: "CSV", "DataFrames", "Interpolations", "Distributions" 
+
+4) Tensorflow.jl installation  
+4.1)frist check if python 3.5 is installed on the system and accessible to the directory. Install tensorflow version 1.4.1 on this using pip install tensorflow==1.4.1 and donnot update this tensflow package
+
+4.2) Now install tensorflow.jl which is a wrapper for tensorflow 
+Pkg.add("TensorFlow",v"0.8.0",v"0.9.0")
+
+this is essential for installing TensorFlow.jl version 0.8.0, as it will install >=0.8.0 and <0.9.0, which is just equivalent to saying install version= 0.8.0. It is essential that one install TensorFlow.jl version 0.8.0 as higher version will lead to to segmentation fault in this repository.
+
+Other useful instructions:
+Can check the packages installed and their respective versions using: Pkg.status()
+removing package:  Pkg.rm("package name")
+for more information of tensorflow.jl refer: https://github.com/malmaud/TensorFlow.jl
+
+##Uninstalling 
+Julia installation and all dependencies are there in the julia directory itself, so for removing julia from the system just fo rm -rf <julia directory
+
+Now remove the folder containg this repo from the system 
+
 
 ## License
 This code is licensed under 3-clause BSD License:
