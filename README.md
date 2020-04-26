@@ -42,7 +42,7 @@ removing package:  `Pkg.rm("package name")`
 for more information of tensorflow.jl refer: https://github.com/malmaud/TensorFlow.jl
 
 ## Uninstalling 
-Julia installation and all dependencies are there in the julia directory itself, so for removing julia from the system just do rm -rf <julia directory>
+Julia installation and all dependencies are there in the julia directory itself, so for removing julia from the system just do `rm -rf <julia directory>`     
 
 Now remove the folder containg this repo from the system 
 
