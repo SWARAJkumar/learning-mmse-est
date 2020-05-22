@@ -44,6 +44,7 @@ get_circ_cov_generator(nAntennas) = real(scm.best_circulant_approximation(scm.sc
 #
 learning_rates_relu    = 1e-4*64./antennas # make learning rates dependend on nAntennas
 learning_rates_softmax = 1e-3*ones(antennas)
+learning_rates_SigSoft = 1e-3*ones(antennas)
 nLayers = 2
 nLearningBatches   = 6000
 nLearningBatchSize = 20
@@ -70,11 +71,17 @@ for iAntenna in 1:length(antennas)
 
     # Network estimators
     if iAntenna == 1
+    	nn_est[:CircSigSoft] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_SigSoft[iAntenna],
+    	activation = cntf.sigsoftmax)
+        nn_est[:ToepSigSoft] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_SigSoft[iAntenna],
+        activation = cntf.sigsoftmax)
         nn_est[:CircReLU] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_relu[iAntenna])
         nn_est[:ToepReLU] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_relu[iAntenna])
         nn_est[:CircSoftmax] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_softmax[iAntenna], activation = cntf.nn.softmax)
         nn_est[:ToepSoftmax] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_softmax[iAntenna], activation = cntf.nn.softmax)
     else
+    	nn_est[:CircSigSoft]    = cntf.resize(nn_est[:CircSigSoft],    nAntennas, learning_rate = learning_rates_SigSoft[iAntenna])
+        nn_est[:ToepSigSoft]    = cntf.resize(nn_est[:ToepSigSoft],    nAntennas, learning_rate = learning_rates_SigSoft[iAntenna])
         nn_est[:CircReLU]    = cntf.resize(nn_est[:CircReLU],    nAntennas, learning_rate = learning_rates_relu[iAntenna])
         nn_est[:ToepReLU]    = cntf.resize(nn_est[:ToepReLU],    nAntennas, learning_rate = learning_rates_relu[iAntenna])
         nn_est[:CircSoftmax] = cntf.resize(nn_est[:CircSoftmax], nAntennas, learning_rate = learning_rates_softmax[iAntenna])

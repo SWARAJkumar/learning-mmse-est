@@ -47,6 +47,13 @@ function ConvNN(kernels::Array, biases::Array; transform = (x,_) -> x, learning_
     return ConvNN(kernels_tf, biases_tf; transform = transform, learning_rate=learning_rate,reg_coeff=reg_coeff,activation=activation)
 
 end
+
+function sigsoftmax(logits)
+    sigmoid_logits = log(tf.nn.sigmoid(logits))
+    sigsoftmax_logits = logits + sigmoid_logits
+    return tf.nn.log_softmax(sigsoftmax_logits)
+    end
+
 # This method takes set values as input for kernels and biases
 function ConvNN(kernels::Array{TensorFlow.Variables.Variable}, biases::Array{TensorFlow.Variables.Variable}; transform = (x,_) -> x, learning_rate=1e-3,reg_coeff=1e-6,activation=nn.relu)
     est = ConvNN()
