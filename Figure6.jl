@@ -44,7 +44,11 @@ get_circ_cov_generator(nAntennas) = real(scm.best_circulant_approximation(scm.sc
 #
 learning_rates_relu    = 1e-4*64./antennas # make learning rates dependend on nAntennas
 learning_rates_softmax = 1e-3*ones(antennas)
-learning_rates_SigSoft = 1e-3*ones(antennas)
+learning_rates_SoftPlus = 1e-3*ones(antennas)
+learning_rates_SigSoft = 1e-2*ones(antennas)
+learning_rates_LogSoft = 1e-2*ones(antennas)
+learning_rates_swish   = 1e-4*64./antennas 
+learning_rates_Hswish  = 1e-4*64./antennas 
 nLayers = 2
 nLearningBatches   = 6000
 nLearningBatchSize = 20
@@ -71,21 +75,63 @@ for iAntenna in 1:length(antennas)
 
     # Network estimators
     if iAntenna == 1
+
+
+    	nn_est[:CircSwish] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_swish[iAntenna],
+    	activation = cntf.swish)
+        nn_est[:ToepSwish] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_swish[iAntenna],
+        activation = cntf.swish)
+
+
+    	nn_est[:CircHSwish] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_Hswish[iAntenna],
+    	activation = cntf.Hswish)
+        nn_est[:ToepHSwish] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_Hswish[iAntenna],
+        activation = cntf.Hswish)
+
+    	nn_est[:CircSoftPlus] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_SoftPlus[iAntenna],
+    	activation = cntf.nn.softplus)
+        nn_est[:ToepSoftPlus] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_SoftPlus[iAntenna],
+        activation = cntf.nn.softplus)
+
+    	nn_est[:CircLogSoftmax] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_LogSoft[iAntenna],
+    	activation = cntf.nn.log_softmax)
+        nn_est[:ToepLogSoftmax] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_LogSoft[iAntenna],
+        activation = cntf.nn.log_softmax)
+
     	nn_est[:CircSigSoft] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_SigSoft[iAntenna],
     	activation = cntf.sigsoftmax)
         nn_est[:ToepSigSoft] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_SigSoft[iAntenna],
         activation = cntf.sigsoftmax)
+
         nn_est[:CircReLU] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_relu[iAntenna])
         nn_est[:ToepReLU] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_relu[iAntenna])
+
         nn_est[:CircSoftmax] = cntf.ConvNN(nLayers, nAntennas, transform = circ_trans, learning_rate = learning_rates_softmax[iAntenna], activation = cntf.nn.softmax)
         nn_est[:ToepSoftmax] = cntf.ConvNN(nLayers, nAntennas, transform = toep_trans, learning_rate = learning_rates_softmax[iAntenna], activation = cntf.nn.softmax)
+
+
     else
+     	nn_est[:CircSwish]    = cntf.resize(nn_est[:CircSwish],    nAntennas, learning_rate = learning_rates_swish[iAntenna])
+        nn_est[:ToepSwish]    = cntf.resize(nn_est[:ToepSwish],    nAntennas, learning_rate = learning_rates_swish[iAntenna])
+
+      	nn_est[:CircHSwish]    = cntf.resize(nn_est[:CircHSwish],    nAntennas, learning_rate = learning_rates_Hswish[iAntenna])
+        nn_est[:ToepHSwish]    = cntf.resize(nn_est[:ToepHSwish],    nAntennas, learning_rate = learning_rates_Hswish[iAntenna])
+
+      	nn_est[:CircSoftPlus]    = cntf.resize(nn_est[:CircSoftPlus],    nAntennas, learning_rate = learning_rates_SoftPlus[iAntenna])
+        nn_est[:ToepSoftPlus]    = cntf.resize(nn_est[:ToepSoftPlus],    nAntennas, learning_rate = learning_rates_SoftPlus[iAntenna])
+  
+        nn_est[:CircLogSoftmax]    = cntf.resize(nn_est[:CircLogSoftmax],    nAntennas, learning_rate = learning_rates_LogSoft[iAntenna])
+        nn_est[:ToepLogSoftmax]    = cntf.resize(nn_est[:ToepLogSoftmax],    nAntennas, learning_rate = learning_rates_LogSoft[iAntenna])
+
     	nn_est[:CircSigSoft]    = cntf.resize(nn_est[:CircSigSoft],    nAntennas, learning_rate = learning_rates_SigSoft[iAntenna])
         nn_est[:ToepSigSoft]    = cntf.resize(nn_est[:ToepSigSoft],    nAntennas, learning_rate = learning_rates_SigSoft[iAntenna])
+
         nn_est[:CircReLU]    = cntf.resize(nn_est[:CircReLU],    nAntennas, learning_rate = learning_rates_relu[iAntenna])
         nn_est[:ToepReLU]    = cntf.resize(nn_est[:ToepReLU],    nAntennas, learning_rate = learning_rates_relu[iAntenna])
+
         nn_est[:CircSoftmax] = cntf.resize(nn_est[:CircSoftmax], nAntennas, learning_rate = learning_rates_softmax[iAntenna])
         nn_est[:ToepSoftmax] = cntf.resize(nn_est[:ToepSoftmax], nAntennas, learning_rate = learning_rates_softmax[iAntenna])
+
     end
 
     train!(nn_est, snr = snr, nBatches = nLearningBatches, get_channel = () -> get_channel(nAntennas, nCoherence, nLearningBatchSize), verbose = verbose)

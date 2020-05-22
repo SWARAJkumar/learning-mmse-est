@@ -52,7 +52,15 @@ function sigsoftmax(logits)
     sigmoid_logits = log(tf.nn.sigmoid(logits))
     sigsoftmax_logits = logits + sigmoid_logits
     return tf.nn.log_softmax(sigsoftmax_logits)
-    end
+end
+
+function swish(x)
+    return x.*tf.nn.sigmoid(x)
+end
+
+function Hswish(x)
+    return x.*tf.nn.relu6(x+6)/6
+end
 
 # This method takes set values as input for kernels and biases
 function ConvNN(kernels::Array{TensorFlow.Variables.Variable}, biases::Array{TensorFlow.Variables.Variable}; transform = (x,_) -> x, learning_rate=1e-3,reg_coeff=1e-6,activation=nn.relu)
@@ -79,6 +87,8 @@ function ConvNN(kernels::Array{TensorFlow.Variables.Variable}, biases::Array{Ten
     intermediates[1] = reduce_mean(square(real(est.y)) + square(imag(est.y)), axis=[2]) # dims: nBatches, nFilterLength
     for i in 1:nLayers-1
         intermediates[i+1] = activation( circ_conv(intermediates[i], kernels[i]) + biases[i] ) # dims: nBatches, nFilterLength
+        #implement batch normalisation  
+        
     end
     # Last layer is without activation function
     filt = circ_conv(intermediates[end], kernels[end]) + biases[end] # dims: nBatches, nFilterLength
