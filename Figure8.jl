@@ -60,6 +60,10 @@ init_params[:learning_rates][:ToepReLU] = 1e-4*64./init_params[:nAntennas]
 init_params[:learning_rates][:CircReLU] = 1e-4*64./init_params[:nAntennas]
 init_params[:learning_rates][:ToepSoftmax] = 1e-3*ones(init_params[:nAntennas])
 init_params[:learning_rates][:CircSoftmax] = 1e-3*ones(init_params[:nAntennas])
+init_params[:learning_rates][:ToepSoftplus] = 1e-3*ones(init_params[:nAntennas])
+init_params[:learning_rates][:CircSoftplus] = 1e-3*ones(init_params[:nAntennas])
+init_params[:learning_rates][:Toepswish] = 1e-4*64./init_params[:nAntennas]
+init_params[:learning_rates][:Circswish] = 1e-4*64./init_params[:nAntennas]
 
 results = DataFrame()
 # read results from previous run
@@ -80,6 +84,24 @@ for nCoherence in nCoherences
 
     # Neural network estimators
     nn_est = Dict{Symbol,Any}()
+
+    nn_est[:Circswish] = cntf.ConvNN(nLayers, init_params[:nAntennas][1], 
+    									transform = circ_trans, 
+    									learning_rate = init_params[:learning_rates][:Circswish][1],
+   										activation = cntf.swish)
+    nn_est[:Toepswish] = cntf.ConvNN(nLayers, init_params[:nAntennas][1], 
+    									transform = toep_trans, 
+    									learning_rate = init_params[:learning_rates][:Toepswish][1],
+    								    activation = cntf.swish)
+
+
+    nn_est[:CircSoftplus] = cntf.ConvNN(nLayers, init_params[:nAntennas][1],
+    								 	transform = circ_trans, learning_rate = init_params[:learning_rates][:CircSoftplus][1],
+    									activation = cntf.nn.softplus)
+    nn_est[:ToepSoftplus] = cntf.ConvNN(nLayers, init_params[:nAntennas][1], 
+    									transform = toep_trans, learning_rate = init_params[:learning_rates][:ToepSoftplus][1],
+     								   	activation = cntf.nn.softplus)
+
     nn_est[:ToepReLU]    = cntf.ConvNN(nLayers, init_params[:nAntennas][1],
                                        transform = toep_trans,
                                        learning_rate = init_params[:learning_rates][:ToepReLU][1])
